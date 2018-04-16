@@ -7,34 +7,41 @@ from scipy.misc import imread
 import sys
 
 
+
 def fourier_inversa(salida):
 
     N = len(salida)
 
     M = len(salida[0])
 
-    real = np.zeros([N, M])
+    real = np.zeros([N, M, 4])
 
-    img = np.zeros([N, M])
+    img = np.zeros([N, M, 4])
 
-    a = np.zeros([N, M])
+    a = np.zeros([N, M, 4])
 
     for u in range(N):
         for v in range(M):
             
             for x in range(N):
                 for y in range(M):
+
+                    for i in range(4):
                     
-                    w = 2.0*np.pi
+                        w = 2.0*np.pi
 
-                    real[u][v] = real[u][v] + salida[x][y]*np.cos(w * (u*x/N  + v*y/M))
+                        real[u][v][i] = real[u][v][i] + salida[x][y][i]*np.cos(w * (u*x/N  + v*y/M))
 
-                    img[u][v] = img[u][v] + salida[x][y]*np.sin(w * (u*x/N  + v*y/M)/N)
+                        img[u][v][i] = img[u][v][i] + salida[x][y][i]*np.sin(w * (u*x/N  + v*y/M))
 
 
-            a[u][v] = ( (real[u][v])**2.0 + (img[u][v])**2.0 )**0.5
+            for z in range(4):
+                a[u][v][z] = ( (real[u][v][z]/(M*N))**2.0 + (img[u][v][z]/(M*N))**2.0 )**0.5
 
     return a
+
+
+
 
 
 def fourier(salida):
@@ -43,42 +50,48 @@ def fourier(salida):
 
     M = len(salida[0])
 
-    real = np.zeros([N, M])
+    real = np.zeros([N, M, 4])
 
-    img = np.zeros([N, M])
+    img = np.zeros([N, M, 4])
 
-    a = np.zeros([N, M])
+    a = np.zeros([N, M, 4])
 
     for u in range(N):
         for v in range(M):
             
             for x in range(N):
                 for y in range(M):
+
+                    for i in range(4):
                     
-                    w = 2.0*np.pi
+                        w = 2.0*np.pi
 
-                    real[u][v] = real[u][v] + salida[x][y]*np.cos(-w * (u*x/N  + v*y/M))
+                        real[u][v][i] = real[u][v][i] + salida[x][y][i]*np.cos(-w * (u*x/N  + v*y/M))
 
-                    img[u][v] = img[u][v] + salida[x][y]*np.sin(-w * (u*x/N  + v*y/M))
+                        img[u][v][i] = img[u][v][i] + salida[x][y][i]*np.sin(-w * (u*x/N  + v*y/M))
 
-
-            a[u][v] = ( (real[u][v]/(M*N))**2.0 + (img[u][v]/(M*N))**2.0 )**0.5
+            for z in range(4):
+                a[u][v][z] = ( (real[u][v][z]/(M*N))**2.0 + (img[u][v][z]/(M*N))**2.0 )**0.5
 
     return a
 
 
 
 
-print A[0][0]
+
 
 entra= sys.argv[1]
 N=int(sys.argv[2])
 
-imagen = imread(entra, (1==1))
+imagen = imread(entra)
 
-print len(imagen), len(imagen[0])
+print imagen
+
+print len(imagen), len(imagen[0]), len(imagen[0][0])
 f = fourier(imagen)
 b = fourier_inversa( f )
+
+print b
 
 plt.imshow(b)
 
